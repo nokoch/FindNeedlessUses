@@ -19,10 +19,20 @@ foreach (0 .. $#ARGV) {
 
 foreach (@ARGV) {
 	next unless $_;
-	if(-e $_) {
+	if(-e $_ && -f $_) {
 		work($_);
 	} elsif ($param{r} && -d $_) {
-		foreach (FindNeedlessUses::listFiles(cwd(), qr/(*ACCEPT)/, 1)) {
+		work_on_folder($_);
+	}
+}
+
+sub work_on_folder {
+	my $folder = shift;
+	foreach (FindNeedlessUses::listFiles($folder, qr/.\.p[lm]$/, 1)) {
+		if(-d $_) {
+			work_on_folder($_);
+		}
+		if(-e $_) {
 			work($_);
 		}
 	}
