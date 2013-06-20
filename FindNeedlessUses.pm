@@ -8,7 +8,7 @@ They can use quite a lot of RAM and time, which is really not neccessary.
 This was developed in an environment, where PPI was not available, so I had to write it all by myself.
 
 It doesn't work with XS-Scripts, so you have to add the module-name in perl-syntax ("Data::Dumper" instead of "Data/Dumper.pm")
-in the __DATA__-block. It will be automatically parsed at startup-time.. 
+in the __DATA__-block. It will be automatically parsed at startup-time. 
 Also: This module just gives hints. Don't take them dead-serious, just see them as a possibly helpful clue.
 
 This module is Copyright (c) 2012-2013 Norman Koch. Germany.
@@ -82,72 +82,6 @@ sub _skip_to_whitespace_reverse (\$$) {
 	} while ($array->[$$i] !~ /\s/);
 
 } ## end sub _skip_to_whitespace_reverse (\$$)
-
-sub _fill_internal_data () {
-	my $name = '';
-
-	while (my $data = <DATA>) {
-		if ($data =~ /^\w/) {
-			$name = $data;
-			$name =~ s/\s*$//g;
-		} else {
-			my $this_export = $data;
-			$this_export =~ s/^\s*|\s*$//g;
-			push @{$xs_exports{$name}}, $this_export if $this_export;
-		}
-
-	} ## end while (my $data = <DATA>)
-
-	# Not really modules, more like "compiler-directives"
-	@perl_pragmas = qw/
-	  warnings
-	  Exporter
-	  diagnostics
-	  strict
-	  Carp
-	  base
-	  Switch
-	  constant
-	  lib
-	  feature
-	  vars
-	  utf8
-	  warnings::register
-	  sort
-	  subs
-	  UNIVERSAL
-	  CORE
-	  re
-	  parent
-	  overload
-	  overloading
-	  ops
-	  open
-	  mro
-	  locale
-	  less
-	  integer
-	  if
-	  filetest
-	  fields
-	  encoding
-	  names
-	  bytes
-	  blib
-	  bigrat
-	  bignum
-	  bigint
-	  autouse
-	  autodie
-	  attributes
-	  threads
-	  thread::shared
-	  vmsish
-	  sigtrap
-	  /;
-
-	# done
-} ## end sub _fill_internal_data
 
 sub stripComments {
 	my $code = shift;
@@ -1527,6 +1461,74 @@ sub listFiles {
 	@files = keys %hash;
 	return @files;
 } ## end sub listFiles
+
+sub _fill_internal_data () {
+	my $name = '';
+
+	while (my $data = <DATA>) {
+		if ($data =~ /^\w/) {
+			$name = $data;
+			$name =~ s/\s*$//g;
+		} else {
+			my $this_export = $data;
+			$this_export =~ s/^\s*|\s*$//g;
+			push @{$xs_exports{$name}}, $this_export if $this_export;
+		}
+
+	} ## end while (my $data = <DATA>)
+
+	# Not really modules, more like "compiler-directives"
+	@perl_pragmas = qw/
+	  warnings
+	  Exporter
+	  diagnostics
+	  strict
+	  Carp
+	  base
+	  Switch
+	  constant
+	  lib
+	  feature
+	  vars
+	  utf8
+	  warnings::register
+	  sort
+	  subs
+	  UNIVERSAL
+	  CORE
+	  re
+	  parent
+	  overload
+	  overloading
+	  ops
+	  open
+	  mro
+	  locale
+	  less
+	  integer
+	  if
+	  filetest
+	  fields
+	  encoding
+	  names
+	  bytes
+	  blib
+	  bigrat
+	  bignum
+	  bigint
+	  autouse
+	  autodie
+	  attributes
+	  threads
+	  thread::shared
+	  vmsish
+	  sigtrap
+	  /;
+
+	# done
+} ## end sub _fill_internal_data
+
+
 
 1;
 
