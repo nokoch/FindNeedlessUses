@@ -1426,6 +1426,44 @@ sub getUnnecessaryUses {
 	return @unnessessary;
 } ## end sub getUnnecessaryUses
 
+sub _removeQuotelikeFromString {
+	my $str = shift;
+
+	if ($str =~ /^(?:"|')/) {
+		$str =~ s/(?:^(?:'|"))|(?:(?:'|")$)//g;
+	} elsif ($str =~ /^q[^\w]/) {
+		$str =~ s/^q([^\w])//g;
+		my $del = _getDelimiter($1);
+		$str =~ s/\Q$del\E$//g;
+	} elsif ($str =~ /^q(?:x|w|q|r)/) {
+		$str =~ s/^q(?:x|w|q|r)(.)//g;
+		my $del = _getDelimiter($1);
+		$str =~ s/\Q$del\E$//;
+	}
+
+	return $str;
+} ## end sub _removeQuotelikeFromString
+
+sub _stringToModName {
+	my $string = shift;
+	return '' unless $string;
+	my $modname = '';
+	$modname = createModuleName($string);
+	return $string if $modname;
+
+	if ($string =~ /->/) {
+		$string =~ s/(.*)->.+?$/$1/;
+		return _stringToModName($1);
+	} elsif ($string =~ /(.*)::.+?\(/) {
+		return _stringToModName($1);
+	} elsif ($string =~ /(.*)::.+?/) {
+		return _stringToModName($1);
+	} else {
+		return '';
+	}
+
+} ## end sub _stringToModName
+
 sub listFiles {
 	my $folder    = shift;
 	my $regex     = shift || qr(\.pm$);
